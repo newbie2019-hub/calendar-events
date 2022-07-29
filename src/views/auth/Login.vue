@@ -14,6 +14,10 @@
         </v-form>
       </v-card>
     </v-layout>
+    <!--- Snackbar -->
+    <v-snackbar v-model="snackbar" :timeout="3200" :color="snackcolor" class="mb-10">
+      {{ snackmsg }}
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -23,6 +27,9 @@
         email: '',
         password: '',
       },
+      snackcolor: '',
+      snackbar: '',
+      snackmsg: '',
       emailRule: [(v) => !!v || 'Email Address is required', (v) => /.+@.+/.test(v) || 'Email must be valid'],
       nameRule: [(v) => !!v || 'Full Name is required', (v) => v.length <= 30 || 'Name must be less than 30 characters'],
     }),
@@ -38,18 +45,37 @@
           })
           .get()
           .then((user) => {
-            localStorage.setItem('authenticated', JSON.stringify(user))
-            this.$router.push('/home')
+            if (user) {
+              localStorage.setItem('authenticated', JSON.stringify(user));
+              this.showSnackBar('Login Successful!');
+              this.$router.push('/home');
+            }
+            else {
+             this.showSnackBar('Account doesn\'t exist', 'error')
+            }
           });
       },
-      
+      showSnackBar(msg, type = '') {
+        switch (type) {
+          case 'success':
+            this.snackcolor = 'green darken-1';
+            break;
+          case 'error':
+            this.snackcolor = 'red darken-1';
+            break;
+          default:
+            this.snackcolor = 'blue darken-1';
+            break;
+        }
+        this.snackbar = true;
+        this.snackmsg = msg;
+      },
     },
   };
 </script>
 
-
 <style>
   .bg-hero {
-    background-color: #B71C1C;
+    background-color: #b71c1c;
   }
 </style>

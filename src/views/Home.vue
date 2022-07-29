@@ -137,7 +137,7 @@
     </v-dialog>
 
     <!--- Snackbar -->
-    <v-snackbar v-model="snackbar" :timeout="2500" :color="snackcolor">
+    <v-snackbar v-model="snackbar" :timeout="3200" :color="snackcolor" class="mb-10">
       {{ snackmsg }}
     </v-snackbar>
   </div>

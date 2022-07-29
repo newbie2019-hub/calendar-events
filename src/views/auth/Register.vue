@@ -15,6 +15,10 @@
         </v-form>
       </v-card>
     </v-layout>
+    <!--- Snackbar -->
+    <v-snackbar v-model="snackbar" :timeout="3200" :color="snackcolor" class="mb-10">
+      {{ snackmsg }}
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -25,23 +29,53 @@
         email: '',
         password: '',
       },
+      snackmsg: '',
+      snackbar: false,
+      snackcolor: '',
       emailRule: [(v) => !!v || 'Email Address is required', (v) => /.+@.+/.test(v) || 'Email must be valid'],
       nameRule: [(v) => !!v || 'Full Name is required', (v) => v.length <= 30 || 'Name must be less than 30 characters'],
     }),
     methods: {
+      showSnackBar(msg, type = '') {
+        switch (type) {
+          case 'success':
+            this.snackcolor = 'green darken-1';
+            break;
+          case 'error':
+            this.snackcolor = 'red darken-1';
+            break;
+          default:
+            this.snackcolor = 'blue darken-1';
+            break;
+        }
+        this.snackbar = true;
+        this.snackmsg = msg;
+      },
       async register() {
         const validated = this.$refs.form.validate();
         if (!validated) return;
-        const res = await this.$localdb.collection('users').add(this.data);
+        const isExisting = await this.$localdb
+          .collection('users')
+          .doc({
+            email: this.data.email,
+          })
+          .get();
 
-        if (res.success) {
-          this.data.full_name = '';
-          this.data.email = '';
-          this.data.password = '';
-          this.$refs.form.resetValidation();
+        if (isExisting == undefined) {
+          const res = await this.$localdb.collection('users').add(this.data);
+
+          if (res.success) {
+            this.data.full_name = '';
+            this.data.email = '';
+            this.data.password = '';
+            this.$refs.form.resetValidation();
+            this.showSnackBar('Account created successfully!', 'success');
+          }
+        }
+        else {
+         this.showSnackBar('Email already exist', 'error')
         }
       },
     },
   };
 </script>
-

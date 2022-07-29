@@ -1,17 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import Login from '../views/auth/Login.vue'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
     name: 'login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/auth/Login.vue'),
+    component: Login,
     meta: {
       requiresAuth: false
     }
-    
+
   },
   {
     path: '/register',
@@ -39,11 +39,11 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   console.log(isAuthenticated())
-  if(!isAuthenticated() && to.matched.some((record) => record.meta.requiresAuth)) {
-    next({name: 'login'})
+  if (!isAuthenticated() && to.matched.some((record) => record.meta.requiresAuth)) {
+    next({ name: 'login' })
   }
-  else if(isAuthenticated() && to.matched.some((record) => !record.meta.requiresAuth)) {
-    next({name: 'home'})
+  else if (isAuthenticated() && to.matched.some((record) => !record.meta.requiresAuth)) {
+    next({ name: 'home' })
   }
   else {
     next();
