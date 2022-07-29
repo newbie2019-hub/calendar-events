@@ -1,0 +1,6 @@
+{
+  "appId": "com.calendar.evsu.app",
+  "appName": "calendar-events",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
